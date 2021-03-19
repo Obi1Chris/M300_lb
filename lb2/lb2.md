@@ -73,8 +73,29 @@ SHELL
 
 apt-get install -y apache2 (-y don't ask option)
 
+
+### Samba Konfigurationen
+Verzeichnis für den Share erstellen und Owner wechseln auf "vagrant"
+>$ ``mkdir /home/vagrant/obi-share`` <br>
+>$ ``sudo chown -R vagrant.vagrant /home/vagrant/obi-share``
+
+Samba dienst neustarten
+>$ ``systemctl restart smbd``
+
+Default smb.conf File umbenenen
+>$ ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
+
+Neue smb.conf file anlegen
+>$ ``sudo nano /etc/samba/smb.conf``
+
+Ich füge hier einen Screenshot meiner smb.conf Datei
+
+![SMB.conf](smb_file_complete.png)
+
 ## Grafische Übersicht 
 ___
+![Grafische Übersicht](Grafische_Uebersicht.png)
+
 alles Relevante wird beschrieben <p>
 Korrektheit der Angaben
 ## Testen
@@ -82,7 +103,8 @@ ___
 Hier werde ich das fertigte Produkt testen.
 
 ### First Try Vagrantfile 
-![Vagrant Up Image](C:\Users\u70929\Documents\M300_Ordner\M300_lb\Git_Picture_Obi.png)
+![Vagrant Up Image](First_Test_Fail.png)
+
 
 
 ## Quellenangaben

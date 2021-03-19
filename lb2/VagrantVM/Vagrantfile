@@ -74,6 +74,11 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y samba
+    sudo mkdir /home/vagrant/obi-share
+    systemctl restart smbd
+    sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old
+    sudo wget -o /etc/samba/smb.conf 
+
   SHELL
 
   config.vm.provision "shell", run: "always", inline: <<-SHELL
