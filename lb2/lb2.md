@@ -67,6 +67,7 @@ VM Name Setzen
 Disk Size Setzen
 > ...
 
+
 SHELL 
 every command inside will be typed while the vm is provisioning. (In the Shell)
 SHELL
@@ -110,9 +111,12 @@ Hier werde ich das fertigte Produkt testen.
 ## Quellenangaben
 [Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
 [VM Deployment with Vagrant](https://www.youtube.com/watch?v=sr9pUpSAexE&t=432s) <p>
-[Samba Service](insert.here) <p>
-[vagrant boxes](https://vagrantcloud.com/search)
-[Mount Shares at Bootup](https://youtu.be/5b3lCE_I3yw)
+[Samba File Sharing](https://www.youtube.com/watch?v=oRHSrnQueak&t=609s) <p>
+[Folder Sharing Linux](https://www.youtube.com/watch?v=x8Lo20C19ao&t=70s) <p>
+[Samba Share on Windows](https://www.youtube.com/watch?v=p2r0kIB_ItE&t=154s) <p>
+[vagrant boxes](https://vagrantcloud.com/search) <p>
+[Mount Shares at Bootup](https://youtu.be/5b3lCE_I3yw) <p>
+[Piping Smbpasswd](https://stackoverflow.com/questions/12009/piping-password-to-smbpasswd)
 ___
 
 ## Angewendete Befehle

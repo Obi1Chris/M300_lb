@@ -7,9 +7,9 @@
 # you're doing.
 Vagrant.configure("2") do |config|
   config.vm.box = "hashicorp/bionic64"
-  config.vm.network "public_network", ip: "192.168.1.160", bridge: "Intel(R) Dual Band Wireless-AC 8265"
-  config.vm.hostname = "Obi-Ubuntu-Client-Samba-2"
-  config.vm.define "Obi-Ubuntu-Client-Samba-2"
+  config.vm.network "public_network", ip: "192.168.1.180", bridge: "Intel(R) Dual Band Wireless-AC 8265"
+  config.vm.hostname = "Obi-Ubuntu-Client-Samba-3"
+  config.vm.define "Obi-Ubuntu-Client-Samba-3"
     # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
    vb.memory = "2048"
    vb.cpus = "2"
       # Determine the name of the VM:
-   vb.name = "Obi-Ubuntu-Client-Samba-2"
+   vb.name = "Obi-Ubuntu-Client-Samba-3"
    end
   #
   # View the documentation for the provider you are using for more
@@ -82,12 +82,19 @@ Vagrant.configure("2") do |config|
 
     sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old
     sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/smb.conf
-        
-    sudo systemctl restart smbd
+    
+    
+# testing out smbpasswd automation
+USER=vagrant
+PASSW=obi123
+#(echo vagrant; echo vagrant) | smbpasswd -s
+echo -ne "$PASSW\n$PASSW\n" | sudo smbpasswd -a -s $USER
+
+sudo systemctl restart smbd
   
     SHELL
 
   config.vm.provision "shell", run: "always", inline: <<-SHELL
- echo "Hello From the Vagrantfile"
+ echo "Hello From Obi's Vagrantfile"
   SHELL
 end
