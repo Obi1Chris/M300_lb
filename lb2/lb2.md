@@ -93,7 +93,7 @@ Default smb.conf File umbenenen (als Backup)
 > ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
 
 Neue smb.conf file vom https webseite (Raw File von Github) herunterziehen 
-> ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/smb.conf`` <p>
+> ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb2/smb.conf`` <p>
 Mit der "-P" Option wird das File in der angegebene Verzeichnis gespeichert. Somit muss ich der Filename nicht definieren. <br>
 
 SMB Passwort setzen. Zuerst werde ich Variablen definieren und die im echo Befehl einschreiben. (Echo Ausgabe wird gegrept ins smbpasswd Befehl)
