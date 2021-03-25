@@ -19,6 +19,8 @@ Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
   * Git hub/lab
   * Git bash
   * Visual Studio Code
+  * Virtualbox
+  * Speicherplatz für die VMs
   
 
 ## Virtuelle Maschine Layout Erstellen
@@ -43,7 +45,7 @@ the comments in the Vagrantfile as well as documentation on
 
 
 
-### Vagrantfile bearbeiten:
+## Vagrantfile bearbeiten:
 Mit diesen Befehl wird einen Vagrant Box erstellt. Ich habe den ubuntu box von "trusty64" gewählt.
 >$ ``Vagrant.configure("2") do |config|`` <br>
 >$ ``config.vm.box = "ubuntu/trusty64"``
@@ -75,38 +77,74 @@ SHELL
 apt-get install -y apache2 (-y don't ask option)
 
 
-### Samba Konfigurationen
+## Samba Konfigurationen
 Verzeichnis für den Share erstellen und Owner wechseln auf "vagrant"
 >$ ``mkdir /home/vagrant/obi-share`` <br>
->$ ``sudo chown -R vagrant.vagrant /home/vagrant/obi-share``
+>$ ``sudo chown -R vagrant:vagrant /home/vagrant/obi-share``
 
-Samba dienst neustarten
->$ ``systemctl restart smbd``
-
-Default smb.conf File umbenenen
->$ ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
-
-Neue smb.conf file anlegen
->$ ``sudo nano /etc/samba/smb.conf``
-
+SMB File bearbeiten: <br>
 Ich füge hier einen Screenshot meiner smb.conf Datei
 
 ![SMB.conf](smb_file_complete.png)
 
+Default smb.conf File umbenenen (als Backup)
+>$ ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
+
+Neue smb.conf file vom https webseite (Raw File von Github) herunterziehen 
+>$ ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/smb.conf`` <p>
+Mit der "-P" Option wird das File in der angegebene Verzeichnis gespeichert. Somit muss ich der Filename nicht definieren.
+
+
+Samba dienst neustarten
+>$ ``systemctl restart smbd`` <br>
+
+
 ## Grafische Übersicht 
 ___
-![Grafische Übersicht](Grafische_Uebersicht.png)
 
-alles Relevante wird beschrieben <p>
-Korrektheit der Angaben
+Da füge ich ein Bild vom Virtuelle Maschine in der Virtualbox, den ich mit Vagrant erstellt habe.
+![Grafische Übersicht](Grafische_Uebersicht.png) <p>
+
+Hier habe ist ein Bild wo man sieht, wie der Share aussieht wenn man ihm als Netzwerklaufwerk anbindet. <br>
+![Netzlaufwerk](Netzlaufwerk_Share.png)
+
+
+
 ## Testen
 ___
-Hier werde ich das fertigte Produkt testen.
+
 
 ### First Try Vagrantfile 
-![Vagrant Up Image](First_Test_Fail.png)
+Dies ist mein erster Versuch einer Vagrant VM vom Vagrantfile zu erstellen. Hier hat es nicht geklappt, weil er nicht auf den Box "ubuntu/trusty64" zugreifen konnte.<br>
+
+![Vagrant Up Image](First_Test_Fail.png) <br>
+Ich habe später gemerkt, das dies an einen Netzwerk Problem meines Laptops daran gelegt hat. <p>
+
+### Second Try Vagrantfile
+Beim zweiten Versuch kam eine andere Meldung. Und zwar war dies eine Meldung wegen der Namenskonvention 
+![Vagrant Up Test](Test_2.png) <br>
+
+Dies habe ich dann angepasst und nun hat es funktioniert. <p>
+
+### Complete Vagrantfile
+Dieser Test ensteht nachdem ich alle Einstellungen und Konfigurationen abgeschlossen habe. Dabei werde ich prüfen, dass der Samba Share beim aufsetzen der VM (mit "vagrant up) erstellt wird und auch aktiv ist. <br>
+Danach werde ich testen ob ich mich als User "vagrant" einloggen kann und Änderungen im Share machen kann inklusiv Dateien löschen.<br>
+
+Hier sieht man, dass der Share erstellt worden ist und ebenfalls aktiv ist:
 
 
+<br>
+Ordner und Dateien erstellen:
+
+<br>
+
+
+Dateien und Ordner wieder löschen:
+
+<br>
+
+### Schlusswort
+Mit diesen Überprüfungen kann ich bestätigen, dass alles so funktioniert wie es sollte.
 
 ## Quellenangaben
 [Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
@@ -120,7 +158,7 @@ Hier werde ich das fertigte Produkt testen.
 ___
 
 ## Angewendete Befehle
-Hier werde ich alle Befehle dokumentieren, die ich benutzt habe.
+Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 
 ### Git Befehle
 |Commands|Meaning|
@@ -142,7 +180,7 @@ Hier werde ich alle Befehle dokumentieren, die ich benutzt habe.
 |---------              |:--------                                                          |
 |   ``systemctl  grep ""``    |   Dienst suchen (mit grep kann es spezifiert werden)       |
 |    ``systemctl list-unit-files``     |   list systemd services.                           |
-|   ``vagrant init``    |   Creates a default vagrantfile for easy editing                  |
+|   ``USER=vagrant``    |  Creates a variable that can be used (as $USER)
 
 </p>
 
