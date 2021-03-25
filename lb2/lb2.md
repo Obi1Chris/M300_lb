@@ -13,6 +13,7 @@
 * Angewendete Befehle
 ## Einleitung
 ___
+Ich gehe so vor, indem ich zuerst einen Vagrant VM vom File ertstelle. Danach werde ich auf den VM alle Samba Einstellungen und Konfigurationen machen. Wenn alles funktioniert, werde ich die Befehle dann in der Vagrantfile hinzufügen. Dabei werde ich immer testen, ob alles gut läuft.
 ### **Anforderungen** <p>
 Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
   * Vagrant
@@ -21,22 +22,23 @@ Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
   * Visual Studio Code
   * Virtualbox
   * Speicherplatz für die VMs
-  
+<p> 
+
 
 ## Virtuelle Maschine Layout Erstellen
 ___
 ### VM Ordner für Vagrant erstellen
 In gewünschtem Verzeichnis einen neuen Ordner für die VM anlegen:
 
-  >$ ``cd Wohin/auch/immer``<br>
-  >$ ``mkdir MeineVagrantVM``<br>
+  > ``cd m300_lb/lb2``<br>
+  > ``mkdir VagrantVM``<br>
 
 
 ### Vagrantfile Vorlage erzeugen:
 Ins Verzeichnis wechseln und dort die eine Vagrantfile Vorlage erzeugen.
 
-  >$ ``cd MeineVagrantVM``<br>
-  >$ ``vagrant init`` <p>
+  > ``cd VagrantVM``<br>
+  > ``vagrant init`` <p>
 A Vagrantfile has been placed in this directory. You are now
 ready to `vagrant up` your first virtual environment! Please read
 the comments in the Vagrantfile as well as documentation on
@@ -46,56 +48,61 @@ the comments in the Vagrantfile as well as documentation on
 
 
 ## Vagrantfile bearbeiten:
-Mit diesen Befehl wird einen Vagrant Box erstellt. Ich habe den ubuntu box von "trusty64" gewählt.
->$ ``Vagrant.configure("2") do |config|`` <br>
->$ ``config.vm.box = "ubuntu/trusty64"``
+Mit diesen Befehl wird einen Vagrant Box erstellt. Ich habe den ubuntu box von "hashicorp" gewählt.
+> ``Vagrant.configure("2") do |config|`` <br>
+> ``config.vm.box = "hashicorp/bionic64"``
 
-Netzwerkeinstellungen des VMs
->$ ``config.vm.network "public_network"``
+Netzwerkeinstellungen des VMs. Statische Netzwerk IP wird gesetzt und der Bridge muss angegegben sein.
+> ``config.vm.network "public_network", ip: "192.168.1.180", bridge: "Intel(R) Dual Band Wireless-AC 8265"``
 
 VM Provider als "Virtualbox setzen"
->$ ``config.vm.provider "virtualbox" do |vb|``
+> ``config.vm.provider "virtualbox" do |vb|``
 
-GUI für den VM aktivieren
->$ ``vb.gui = true``
+GUI für den VM deaktivieren
+> ``vb.gui = false``
 
 Memory und Anzahl CPUs des VMs bestimmen
->$ ``vb.memory = "2048"`` <br>
+> ``vb.memory = "2048"`` <br>
    ``vb.cpus = "2"``
 
 VM Name Setzen
->$ ``vb.name = "Ubuntu Server by Vagrant"``
-
-Disk Size Setzen
-> ...
+> ``vb.name = "Ubuntu Server by Vagrant"``
 
 
-SHELL 
-every command inside will be typed while the vm is provisioning. (In the Shell)
-SHELL
 
-apt-get install -y apache2 (-y don't ask option)
+Alle Befehle in der Provision "shell" werden nacheinander beim aufsetzen geführt.
+>``config.vm.provision "shell", inline: <<-SHELL``
+
+
+Samba Service installieren. Mit -y Option wird keine Bestätigung verlangt, dass man alle Abhängigkeiten installieren möchte. Dazu noch einen System Update durchführen
+>``apt-get install update`` <br>
+>``apt-get install -y samba``
 
 
 ## Samba Konfigurationen
 Verzeichnis für den Share erstellen und Owner wechseln auf "vagrant"
->$ ``mkdir /home/vagrant/obi-share`` <br>
->$ ``sudo chown -R vagrant:vagrant /home/vagrant/obi-share``
+> ``mkdir /home/vagrant/obi-share`` <br>
+> ``sudo chown -R vagrant:vagrant /home/vagrant/obi-share``
 
 SMB File bearbeiten: <br>
 Ich füge hier einen Screenshot meiner smb.conf Datei
 
-![SMB.conf](smb_file_complete.png)
+![SMB.conf](smb_pic.png)
 
 Default smb.conf File umbenenen (als Backup)
->$ ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
+> ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
 
 Neue smb.conf file vom https webseite (Raw File von Github) herunterziehen 
->$ ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/smb.conf`` <p>
-Mit der "-P" Option wird das File in der angegebene Verzeichnis gespeichert. Somit muss ich der Filename nicht definieren.
+> ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/smb.conf`` <p>
+Mit der "-P" Option wird das File in der angegebene Verzeichnis gespeichert. Somit muss ich der Filename nicht definieren. <br>
 
+SMB Passwort setzen. Zuerst werde ich Variablen definieren und die im echo Befehl einschreiben. (Echo Ausgabe wird gegrept ins smbpasswd Befehl)
+>``USER=vagrant`` <br>
+>``PASSW=obi123``
+>
+>``echo -ne "$PASSW\n$PASSW\n" | sudo smbpasswd -a -s $USER``
 
-Samba dienst neustarten
+Samba dienst neustarten.
 >$ ``systemctl restart smbd`` <br>
 
 
@@ -131,33 +138,28 @@ Dieser Test ensteht nachdem ich alle Einstellungen und Konfigurationen abgeschlo
 Danach werde ich testen ob ich mich als User "vagrant" einloggen kann und Änderungen im Share machen kann inklusiv Dateien löschen.<br>
 
 Hier sieht man, dass der Share erstellt worden ist und ebenfalls aktiv ist:
-
-
-<br>
-Ordner und Dateien erstellen:
+![Vagrant Up Test](Netzlaufwerk_Share.png)
 
 <br>
+Ordner und Dateien erstellen: <br>
 
+
+![Create Ordner](Cr_Ordner.png)
+<br>
+![Create Ordner](Cr_File.png)
 
 Dateien und Ordner wieder löschen:
-
+![Create Ordner](Del_Changes.png)
 <br>
 
 ### Schlusswort
 Mit diesen Überprüfungen kann ich bestätigen, dass alles so funktioniert wie es sollte.
 
-## Quellenangaben
-[Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
-[VM Deployment with Vagrant](https://www.youtube.com/watch?v=sr9pUpSAexE&t=432s) <p>
-[Samba File Sharing](https://www.youtube.com/watch?v=oRHSrnQueak&t=609s) <p>
-[Folder Sharing Linux](https://www.youtube.com/watch?v=x8Lo20C19ao&t=70s) <p>
-[Samba Share on Windows](https://www.youtube.com/watch?v=p2r0kIB_ItE&t=154s) <p>
-[vagrant boxes](https://vagrantcloud.com/search) <p>
-[Mount Shares at Bootup](https://youtu.be/5b3lCE_I3yw) <p>
-[Piping Smbpasswd](https://stackoverflow.com/questions/12009/piping-password-to-smbpasswd)
-___
+
+
 
 ## Angewendete Befehle
+___
 Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 
 ### Git Befehle
@@ -172,7 +174,7 @@ Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 |---------              |:--------                                                          |
 |   ``vagrant init``    |   Creates a default vagrantfile for easy editing                  |
 |    ``vagrant up``     |   Creates a Virtualbox VM based on the setting in the vagrantfile.|
-|   ``vagrant init``    |   Creates a default vagrantfile for easy editing                  |
+|   ``vagrant destroy``    |   Destroys a Vagrant VM in the current folder (if there is one)                 |
 
 
 ### Ubuntu Befehle
@@ -184,70 +186,13 @@ Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 
 </p>
 
-.
-
-.
-
-
-.
-
-
-.
-
-
-
-
-.
-
-.
-
-
-.
-
-
-.
-
-
-
-
-.
-
-.
-
-
-.
-
-
-.
-## Markdown Cheatsheet for Documentation
-
-Dieses **Wort** ist fett.
-*Kursiver Text*<br>
-_Kursiver Text_<p>
-**Fetter Text** <br>
-__Fetter Text__ <p>
-***Kursiver und fetter Text***<br>
-___Kursiver und fetter Text___
-
-
->Dies ist ein **eingerückter Bereich**.
->Der Bereich geht hier weiter.
-
->Dies ist ein weiterer **eingerückter Bereich**.
-Auch dieser Bereich geht in der nächsten Zeile weiter.
-
-Diese Zeile ist allerdings nicht mehr eingerückt.
-
-Das ist `code`.
-
-``Das ist alles code.``
-
->[ ] A <p>
-[x] B <p>
-[ ] C
-
-### Tabellen
-|Spalte 1|Spalte 2|
-|--------|--------|
-|    A    |    B    |
-|    C    |    D    |
+## Quellenangaben
+___
+[Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
+[VM Deployment with Vagrant](https://www.youtube.com/watch?v=sr9pUpSAexE&t=432s) <p>
+[Samba File Sharing](https://www.youtube.com/watch?v=oRHSrnQueak&t=609s) <p>
+[Folder Sharing Linux](https://www.youtube.com/watch?v=x8Lo20C19ao&t=70s) <p>
+[Samba Share on Windows](https://www.youtube.com/watch?v=p2r0kIB_ItE&t=154s) <p>
+[vagrant boxes](https://vagrantcloud.com/search) <p>
+[Mount Shares at Bootup](https://youtu.be/5b3lCE_I3yw) <p>
+[Piping Smbpasswd](https://stackoverflow.com/questions/12009/piping-password-to-smbpasswd)
