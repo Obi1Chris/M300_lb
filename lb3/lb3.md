@@ -8,6 +8,8 @@
 * PHP & Apache Dienst installieren
   * Docker-compose File
 *  MySql Dienst Installieren
+   *  Docker File Image
+   *  Docker-Compose File
 * Grafische Übersicht
 * Testing
 * Quellenangaben
@@ -15,7 +17,7 @@
 ## Einleitung
 ___
 
-Ich werde einen PHP mit Apache Dienst mit einen MySQL Datenbank verknüpfen.
+Ich werde einen PHP mit Apache Dienst mit einen MySQL Datenbank Support verknüpfen.
 
 ### **Anforderungen** <p>
 Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
@@ -59,12 +61,37 @@ Für die ganze Umgebung werde ich einen neuen Verzeichnis anlegen und in dies we
  >``cd obi_dc_test/``
 
 ### Docker Compose YAML File erstellen
-![PHP-Docker-Compose](images/compose_php.png)
 
-Den Image ist eine PHP Dienst der inklusive als Apache Webserver verwendet werden kann <br>
-
+```Ruby
+version: '3.3'
+services:
+    web:
+       image: php:7.3-apache
+       container_name: php73
+       volumes:
+         - ./php:/var/www/html/
+       ports:
+         - 8000:80
+```
+Den Image ist eine PHP Dienst der inklusive als Apache Webserver verwendet werden kann. <br>
+Ich habe einen Volume erstellt, die den lokallen Verzeichnis "/php" auf den Remote Verzeichnis "/var/www/html/" verknüpft.<br>
 Ich habe einen Port Forwarding vom Port 8000 zur Port 80 konfiguriert. Somit muss ich nur den Port 8000 angeben und es wird intern auf Port 80 weitergeleitet. <br>
 
+  
+## MySQL Dienst installieren
+___
+
+### Dockerfile Image
+
+Anstatt den bisher verwendete php-apache Image werde ich einen Image selbst erstellen, die zusätzlich noch eine MySQL Support anbietet.<br>
+Dafür werde ich einen Dockerfile erstellen:
+
+```Ruby
+FROM php:7.3.3-apache
+RUN apt-update && apt-get upgrade -y
+RUN docker-php-ext-install mysqli
+EXPOSE 80
+```
 ## Grafische Übersicht 
 ___
 
