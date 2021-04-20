@@ -1,22 +1,26 @@
-## M300 Lernbeurteilung 2 | Dokumentation
+## M300 Lernbeurteilung 3 | Markdown Dokumentation
 ### von Obinna Maduabum    
 ---
 ## Inhaltsverzeichnis
 * Einleitung
   * Anforderung
-* VM erstellen
-* Samba Dienst starten
-* Samba Share erstellen
+* Docker VM erstellen
+* PHP & Apache Dienst installieren
+  * Docker-compose File
+*  MySql Dienst Installieren
 * Grafische Übersicht
 * Testing
 * Quellenangaben
 * Angewendete Befehle
 ## Einleitung
 ___
-Ich gehe so vor, indem ich zuerst einen Vagrant VM vom File ertstelle. Danach werde ich auf den VM alle Samba Einstellungen und Konfigurationen machen. Wenn alles funktioniert, werde ich die Befehle dann in der Vagrantfile hinzufügen. Dabei werde ich immer testen, ob alles gut läuft.
+
+Ich werde einen PHP mit Apache Dienst mit einen MySQL Datenbank verknüpfen.
+
 ### **Anforderungen** <p>
 Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
   * Vagrant
+  * Docker (inkl. Docker-compose)
   * Git hub/lab
   * Git bash
   * Visual Studio Code
@@ -25,86 +29,41 @@ Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
 <p> 
 
 
-## Virtuelle Maschine Layout Erstellen
+## Docker VM Erstellen
 ___
 ### VM Ordner für Vagrant erstellen
 In gewünschtem Verzeichnis einen neuen Ordner für die VM anlegen:
 
-  > ``cd m300_lb/lb2``<br>
-  > ``mkdir VagrantVM``<br>
+  > ``cd m300_lb/lb3``<br>
+  > ``mkdir DockerVM``<br>
 
+Um den Docker Virtuelle Maschine zu erzeugen habe ich Vagrant benutzt. Ich habe einen Vagrantfile verwendet den der Lehrer für uns zur Verfügung gestellt hat verwendet.<br>
 
-### Vagrantfile Vorlage erzeugen:
-Ins Verzeichnis wechseln und dort die eine Vagrantfile Vorlage erzeugen.
+Die Netzwerk Einstellung wurde vom Lehrer vorgegeben.
 
-  > ``cd VagrantVM``<br>
-  > ``vagrant init`` <p>
-A Vagrantfile has been placed in this directory. You are now
-ready to `vagrant up` your first virtual environment! Please read
-the comments in the Vagrantfile as well as documentation on
-[vagrantup](vagrantup.com) for more information on using Vagrant. <p>
+### Docker-Compose Kommando installieren:
+Damit die "Docker-Compose" Befehl angewendet kann, muss dies im Docker VM noch installiert werden:
+> ``sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`` <p>
 
-
-
-
-## Vagrantfile bearbeiten:
-Mit diesen Befehl wird einen Vagrant Box erstellt. Ich habe den ubuntu box von "hashicorp" gewählt.
-> ``Vagrant.configure("2") do |config|`` <br>
-> ``config.vm.box = "hashicorp/bionic64"``
-
-Netzwerkeinstellungen des VMs. Statische Netzwerk IP wird gesetzt und der Bridge muss angegegben sein.
-> ``config.vm.network "public_network", ip: "192.168.1.180", bridge: "Intel(R) Dual Band Wireless-AC 8265"``
-
-VM Provider als "Virtualbox setzen"
-> ``config.vm.provider "virtualbox" do |vb|``
-
-GUI für den VM deaktivieren
-> ``vb.gui = false``
-
-Memory und Anzahl CPUs des VMs bestimmen
-> ``vb.memory = "2048"`` <br>
-   ``vb.cpus = "2"``
-
-VM Name Setzen
-> ``vb.name = "Ubuntu Server by Vagrant"``
+Danach noch die Berechtigung anpassen (ausführbar machen):<br>
+>``sudo chmod +x /usr/local/bin/docker-compose``
 
 
 
-Alle Befehle in der Provision "shell" werden nacheinander beim aufsetzen geführt.
->``config.vm.provision "shell", inline: <<-SHELL``
+## PHP und Apache Dienst installieren
+___
 
+### Verzeichnis für Umgebung anlegen
+Für die ganze Umgebung werde ich einen neuen Verzeichnis anlegen und in dies wechseln.
+ >``mkdir obi_dc_test`` <br>
+ >``cd obi_dc_test/``
 
-Samba Service installieren. Mit -y Option wird keine Bestätigung verlangt, dass man alle Abhängigkeiten installieren möchte. Dazu noch einen System Update durchführen
->``apt-get install update`` <br>
->``apt-get install -y samba``
+### Docker Compose YAML File erstellen
+![PHP-Docker-Compose](images/compose_php.png)
 
+Den Image ist eine PHP Dienst der inklusive als Apache Webserver verwendet werden kann <br>
 
-## Samba Konfigurationen
-Verzeichnis für den Share erstellen und Owner wechseln auf "vagrant"
-> ``mkdir /home/vagrant/obi-share`` <br>
-> ``sudo chown -R vagrant:vagrant /home/vagrant/obi-share``
-
-SMB File bearbeiten: <br>
-Ich füge hier einen Screenshot meiner smb.conf Datei
-
-![SMB.conf](smb_pic.png)
-
-Default smb.conf File umbenenen (als Backup)
-> ``sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.old``
-
-Neue smb.conf file vom https webseite (Raw File von Github) herunterziehen 
-> ``sudo wget -P /etc/samba/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb2/smb.conf`` <p>
-Mit der "-P" Option wird das File in der angegebene Verzeichnis gespeichert. Somit muss ich der Filename nicht definieren. <br>
-
-SMB Passwort setzen. Zuerst werde ich Variablen definieren und die im echo Befehl einschreiben. (Echo Ausgabe wird gegrept ins smbpasswd Befehl)
->``USER=vagrant`` <br>
->``PASSW=obi123``
->
->``echo -ne "$PASSW\n$PASSW\n" | sudo smbpasswd -a -s $USER``
-
-Samba dienst neustarten.
->$ ``systemctl restart smbd`` <br>
-
+Ich habe einen Port Forwarding vom Port 8000 zur Port 80 konfiguriert. Somit muss ich nur den Port 8000 angeben und es wird intern auf Port 80 weitergeleitet. <br>
 
 ## Grafische Übersicht 
 ___
@@ -188,6 +147,9 @@ Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 
 ## Quellenangaben
 ___
+
+[Docker Images](https://hub.docker.com/search?image_filter=official&type=image)
+
 [Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
 [VM Deployment with Vagrant](https://www.youtube.com/watch?v=sr9pUpSAexE&t=432s) <p>
 [Samba File Sharing](https://www.youtube.com/watch?v=oRHSrnQueak&t=609s) <p>
