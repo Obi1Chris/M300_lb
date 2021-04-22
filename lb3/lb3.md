@@ -12,6 +12,8 @@
    *  Docker-Compose File
 * Grafische Übersicht
 * Testing
+  * PHP + Apache
+  * MySQL
 * Quellenangaben
 * Angewendete Befehle
 ## Einleitung
@@ -92,32 +94,122 @@ RUN apt-update && apt-get upgrade -y
 RUN docker-php-ext-install mysqli
 EXPOSE 80
 ```
+
+### Custom Image beim Docker-compose File verwenden
+Ich werde meine custom Image nun am Docker-compose file hinzufügen:
+```Ruby
+version: '3.3'
+services:
+    web:
+      build: 
+        context: ./php
+        dockerfile: Dockerfile
+      container_name: php73
+      volumes:
+        - ./php:/var/www/html/
+      ports:
+        - 8000:80
+    
+```
+Nun werde ich im compose file noch eine zweite Docker Container erstellen für den MySQL Datenbank.
+
+```Ruby
+db:
+      container_name: mysql8
+      image: mysql:8.0
+      command: --default-authentication-plugin=mysql_native_password
+      restart: always
+      environment: 
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: Obi_test_db
+        MYSQL_USER: Obisql 
+        MYSQL_PASSWORD: obipass123
+    ports: 
+        - 6033:3306
+```
+Als Authentifizierung möchte ich einen native Passwort verwenden den ich angeben werde.<br>
+Mit ``restart: always`` wird der Container immer neu gesstartet, wenn er manuell angehalten wird oder der Docker-Daemon selbst neu gestartet wird.<br>
+Im ``environment`` setze ich bestimmte Variabeln wie Root Passwort, Datenbank Name, DB User, und DB Passwort.<br>
+Mit der Port "6033" wird die Verbindung zu unseren lokalen SQL Port auf "3306" weitergeleitet.<p>
+
+Nun werde ich dies testen und zwar im Testing , MySQL Service
+
 ## Grafische Übersicht 
 ___
 
-Da füge ich ein Bild vom Virtuelle Maschine in der Virtualbox, den ich mit Vagrant erstellt habe.
-![Grafische Übersicht](Grafische_Uebersicht.png) <p>
-
-Hier habe ist ein Bild wo man sieht, wie der Share aussieht wenn man ihm als Netzwerklaufwerk anbindet. <br>
-![Netzlaufwerk](Netzlaufwerk_Share.png)
 
 
 
-## Testen
+## Testing
 ___
 
 
-### First Try Vagrantfile 
-Dies ist mein erster Versuch einer Vagrant VM vom Vagrantfile zu erstellen. Hier hat es nicht geklappt, weil er nicht auf den Box "ubuntu/trusty64" zugreifen konnte.<br>
+### PHP + Apache
+Um den Docker-compose File zu testen werde ich einen einfachen php Website File erstellen und dies vom Host PC anzeigen lassen.<br>
+Wenn ich alles richtig konfiguriert habe sollte ich mit der ip Adresse "192.168.60.101" und der Port "8000" auf der Webserver erlangen.<br>
 
-![Vagrant Up Image](First_Test_Fail.png) <br>
-Ich habe später gemerkt, das dies an einen Netzwerk Problem meines Laptops daran gelegt hat. <p>
+In php Verzeichnis wechseln und einen html file für die Webseite anlegen:
 
-### Second Try Vagrantfile
-Beim zweiten Versuch kam eine andere Meldung. Und zwar war dies eine Meldung wegen der Namenskonvention 
-![Vagrant Up Test](Test_2.png) <br>
+  > ``cd php/``<br>
+  > ``nano index.php``<br>
+  > ![index.php](images/php_text_website_1.png)
 
-Dies habe ich dann angepasst und nun hat es funktioniert. <p>
+PHP Container anhand Docker-compose yaml file starten.
+
+  > ``docker-compose up``<br>
+
+Nachdem der Dienst gestartet wird. Auf Host PC die entsprechende IP Adresse und Port eingeben:
+
+   ![php website](images/Website_php.png)
+
+### MySQL Service
+Für den Test werde ich einen docker compose up führen um meine Docker-compose File zu überprüfen.
+
+### Error 1
+Es kam folgender Meldung: <br>
+![Error MySQL](images/Error_MySQL.png) <br>
+Nachdem ich etwas recherchiert habe, habe ich festgestellt, dass das Problem beim Einrücken der Docker-compose File lag.<br>
+Neu sieht ist es nun so aus:
+```Ruby
+version: '3.3'
+services:
+  web:
+    build: 
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php73
+    volumes:
+      - ./php:/var/www/html/
+    ports:
+      - 8000:80
+  db:
+    container_name: mysql8
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Obi_test_db
+      MYSQL_USER: Obisql 
+      MYSQL_PASSWORD: obipass123
+    ports: 
+      - 6033:3306
+```
+Jetzt hat es geklappt mit den ports mapping, aber jz habe ich eine andere Error erhalten.
+
+### Error 2
+Jetzt erschien folgender Meldung: <br>
+![Error Image](images/Error_Docker_Image.png) <br>
+
+Diesmal ist der Fehler Meldung vom Dockerfile des Images. Und zwar im zweiten Zeile:
+```Ruby
+RUN apt-update && apt-get upgrade -y
+```
+Das ist ein Syntax Fehler von mir. Es sollte ``apt-get update`` heissen und nicht ``apt-update``.<br>
+Dies habe ich angepasst und nochmals ``docker-compose up`` ausgeführt.
+
+Nun funktioniert alles fehlerfrei:<br>
+![Success Test](images/Test_Php_MySql.png) <br>
 
 ### Complete Vagrantfile
 Dieser Test ensteht nachdem ich alle Einstellungen und Konfigurationen abgeschlossen habe. Dabei werde ich prüfen, dass der Samba Share beim aufsetzen der VM (mit "vagrant up) erstellt wird und auch aktiv ist. <br>
