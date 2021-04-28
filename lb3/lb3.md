@@ -134,6 +134,34 @@ Mit der Port "6033" wird die Verbindung zu unseren lokalen SQL Port auf "3306" w
 
 Nun werde ich dies testen und zwar im Testing , MySQL Service
 
+## Verknüpfung MySQL Service mit PHP
+___
+
+Mein Ziel ist, dass ich den PHP Apache Service mit dem MySQL Service verbinde. <br>
+Dabei soll es möglich sein die Daten eines vorhandenes Datenbank auf die Webseite anzuzeigen. Um zu testen, dass dies möglich wäre, habe ich den PHP Index File angepasst, so dass er eine Verbindung zum MySQL Server beweisen kann. Wenn die Verbindung erfolgreich aufgebaut wurde, dann steht auf der Website "Connection Successfull" ansonsten "Connection Failed".<br>
+Damit dies überhaupt möglich ist, muss ich die Container verknüpfen. Dies mache ich indem ich der PHP Container abhängig vom MySQL Container mache:
+```Ruby
+depends_on:
+      - db
+```
+
+### MySQL Connection in PHP
+Jetzt erstelle ich im PHP Index File eine Verbindung. Anhand ``IF`` und ``ELSE`` Kriterien wird eine Bestätigung der Verbindung auf der Webseite angezeigt.
+```Ruby
+<?php
+$host = 'db'; 
+$user = 'Obisql';
+$password = 'obipass123';
+$db = 'Obi_test_db';
+
+$conn = new mysqli($host,$user,$password,$db);
+if($conn->connect_error){
+    echo 'connection failed' . $conn->connect_error;
+}
+echo 'successfully connected to Obi`s MYSQL';
+
+?>
+```
 ## Grafische Übersicht 
 ___
 
@@ -211,27 +239,15 @@ Dies habe ich angepasst und nochmals ``docker-compose up`` ausgeführt.
 Nun funktioniert alles fehlerfrei:<br>
 ![Success Test](images/Test_Php_MySql.png) <br>
 
-### Complete Vagrantfile
-Dieser Test ensteht nachdem ich alle Einstellungen und Konfigurationen abgeschlossen habe. Dabei werde ich prüfen, dass der Samba Share beim aufsetzen der VM (mit "vagrant up) erstellt wird und auch aktiv ist. <br>
-Danach werde ich testen ob ich mich als User "vagrant" einloggen kann und Änderungen im Share machen kann inklusiv Dateien löschen.<br>
+### Verknüpfung MySQL in PHP Webseite
+Mein Ziel ist, dass ich den PHP Apache Service mit dem MySQL Service verbinde. <br>
+Dabei soll es möglich sein die Daten eines vorhandenes Datenbank auf die Webseite anzuzeigen. Um zu testen, dass dies möglich wäre, habe ich den PHP Index File angepasst, so dass er eine Verbindung zum MySQL Server beweisen kann. Wenn die Verbindung erfolgreich aufgebaut wurde, dann steht auf der Website "Connection Successfull" ansonsten "Connection Failed".
 
-Hier sieht man, dass der Share erstellt worden ist und ebenfalls aktiv ist:
-![Vagrant Up Test](Netzlaufwerk_Share.png)
+![Success Test](images/success_mysql_php.png) <br>
 
-<br>
-Ordner und Dateien erstellen: <br>
+### Schlusswort Testing
+Wie man war den Test erfolgreich. Somit sind alle meine Ziele erreicht.
 
-
-![Create Ordner](Cr_Ordner.png)
-<br>
-![Create Ordner](Cr_File.png)
-
-Dateien und Ordner wieder löschen:
-![Create Ordner](Del_Changes.png)
-<br>
-
-### Schlusswort
-Mit diesen Überprüfungen kann ich bestätigen, dass alles so funktioniert wie es sollte.
 
 
 
@@ -240,34 +256,36 @@ Mit diesen Überprüfungen kann ich bestätigen, dass alles so funktioniert wie 
 ___
 Hier werde ich Befehle dokumentieren, die ich benutzt habe.
 
+### Docker Befehle
+|Commands|Meaning|
+|---------                        |:--------                                                          |
+|   ``docker-compose up ``        |   Add a change to the staging list (to be committed)              |
+|    ``docker ``               |   make all changes in the staging list permanent.|
+|   ``git push``                  |   Creates a default vagrantfile for easy editing                  |
+### Vagrant Befehle
+
+|Commands|Meaning|
+|---------              |:--------                                                          |
+|   ``vagrant up``      |   Creates a Virtualbox VM based on the setting in the vagrantfile                  |
+|   ``vagrant ssh``     | Creates a SSH Connection to the running Vagrant VM  |
+|   ``vagrant destroy``    |   Destroys a Vagrant VM in the current folder (if there is one)                 |
+
+
 ### Git Befehle
 |Commands|Meaning|
 |---------              |:--------                                                          |
 |   ``git add ``        |   Add a change to the staging list (to be committed)              |
 |    ``git commit``     |   make all changes in the staging list permanent.|
 |   ``git push``        |   Creates a default vagrantfile for easy editing                  |
-### Vagrant Befehle
 
-|Commands|Meaning|
-|---------              |:--------                                                          |
-|   ``vagrant init``    |   Creates a default vagrantfile for easy editing                  |
-|    ``vagrant up``     |   Creates a Virtualbox VM based on the setting in the vagrantfile.|
-|   ``vagrant destroy``    |   Destroys a Vagrant VM in the current folder (if there is one)                 |
-
-
-### Ubuntu Befehle
-|Commands|Meaning|
-|---------              |:--------                                                          |
-|   ``systemctl  grep ""``    |   Dienst suchen (mit grep kann es spezifiert werden)       |
-|    ``systemctl list-unit-files``     |   list systemd services.                           |
-|   ``USER=vagrant``    |  Creates a variable that can be used (as $USER)
 
 </p>
 
 ## Quellenangaben
 ___
 
-[Docker Images](https://hub.docker.com/search?image_filter=official&type=image)
+[Docker Images](https://hub.docker.com/search?image_filter=official&type=image) <br>
+[MySQL](https://www.youtube.com/watch?v=91iNR0eG8kE) <p>
 
 [Markdown Anleitung](https://www.ionos.de/digitalguide/websites/web-entwicklung/markdown/) <p>
 [VM Deployment with Vagrant](https://www.youtube.com/watch?v=sr9pUpSAexE&t=432s) <p>
