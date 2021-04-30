@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
      vb.memory = "2048"
-     vb.name = "Obi-Docker VM"
+     vb.name = "Obi-Docker VM 1"
   end
 
   config.vm.provision "shell", inline: <<-SHELL
