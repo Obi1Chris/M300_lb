@@ -21,7 +21,8 @@
 ## Einleitung
 ___
 
-Ich werde einen PHP mit Apache Dienst mit einen MySQL Datenbank Support verknüpfen.
+Mein Ziel ist es eine Webformular anhand PHP und Apache zu erstellen und wenn man diese Formular ausfüllt, werden die Daten in meiner MySQL Datenbank gespeichert. <p>
+Ich beginne indem ich eine PHP-Apache Dienst starte und eine einfache Webseite anzeigen lassen. Wenn dies funktioniert, werde ich einen eigenen Docker Image erstellen, worin die PHP-Apache Dienst mit den vom MySQL verknüpft ist. Nachdem ich die Verbindung bestätigen kann, werde ich dann die Webformular erstellen und es so konfigurieren, dass die eingegebene Daten in mein erstellte Datenbank hinzugefügt werden. 
 
 ### **Anforderungen** <p>
 Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
@@ -37,13 +38,13 @@ Um diese Setup aufzubauen habe ich folgendes zur Verfügung gestellt.
 
 ## Docker VM Erstellen
 ___
-### VM Ordner für Vagrant erstellen
+### VM Ordner für Docker VM erstellen
 In gewünschtem Verzeichnis einen neuen Ordner für die VM anlegen:
 
   > ``cd m300_lb/lb3``<br>
   > ``mkdir DockerVM``<br>
 
-Um den Docker Virtuelle Maschine zu erzeugen habe ich Vagrant benutzt. Ich habe einen Vagrantfile verwendet den der Lehrer für uns zur Verfügung gestellt hat verwendet.<br>
+Um den Docker Virtuelle Maschine zu erzeugen habe ich Vagrant benutzt. Ich habe einen Vagrantfile verwendet den der Lehrer für uns zur Verfügung gestellt hat .<br>
 
 Die Netzwerk Einstellung wurde vom Lehrer vorgegeben.
 
@@ -246,7 +247,7 @@ Nun Sieht die Form so aus: <br>
 ## Grafische Übersicht 
 ___
 
-
+![Netzplan](images/LB3_Obi_Netzplan.png)
 
 
 ## Testing
