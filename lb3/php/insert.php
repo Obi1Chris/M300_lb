@@ -12,9 +12,9 @@ if (isset($_POST['submit'])) {
         $phone = $_POST['phone'];
 
         $host = "db";
-        $dbUsername = "obi";
-        $dbPassword = "";
-        $dbName = "test_db_obi";
+        $dbUsername = "Obisql";
+        $dbPassword = "obipass123";
+        $dbName = "Obi_test_db";
 
         $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
 
@@ -23,7 +23,7 @@ if (isset($_POST['submit'])) {
         }
         else {
             $Select = "SELECT email FROM register WHERE email = ? LIMIT 1";
-            $Insert = "INSERT INTO register(username, password, gender, email, phoneCode, phone) values(?, ?, ?, ?, ?, ?)";
+            $Insert = "INSERT INTO register (username, password, gender, email, phoneCode, phone) values(?, ?, ?, ?, ?, ?)";
 
             $stmt = $conn->prepare($Select);
             $stmt->bind_param("s", $email);
