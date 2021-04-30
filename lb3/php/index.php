@@ -11,7 +11,7 @@ if($conn->connect_error){
     echo 'connection failed' . $conn->connect_error;
 }
 echo 'successfully connected to Obi`s MYSQL';
-<break>
+
 
 // sql to create table
 $sql = "CREATE TABLE register (

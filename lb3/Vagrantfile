@@ -30,7 +30,31 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
      vb.memory = "2048"
+     vb.name = "Obi-Docker VM"
   end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    set -e
+    
+    sudo mkdir /home/vagrant/obi_dc_test
+    sudo chown vagrant:vagrant /home/vagrant/obi_dc_test
+
+    sudo mkdir /home/vagrant/obi_dc_test/php/
+    sudo chown vagrant:vagrant /home/vagrant/obi_dc_test/php/
+
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+
+
+    wget -P /home/vagrant/obi_dc_test/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb3/dockerfile
+    wget -P /home/vagrant/obi_dc_test/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb3/docker-compose.yml
+
+    wget -P /home/vagrant/obi_dc_test/php/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb3/php/index.php
+    wget -P /home/vagrant/obi_dc_test/php/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb3/php/insert.php
+    wget -P /home/vagrant/obi_dc_test/php/ https://raw.githubusercontent.com/Obi1Chris/M300_lb/main/lb3/php/register_form.html
+
+  
+    SHELL
 
   # Docker Provisioner
   config.vm.provision "docker" do |d|
