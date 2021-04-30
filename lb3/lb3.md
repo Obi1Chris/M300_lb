@@ -10,6 +10,8 @@
 *  MySql Dienst Installieren
    *  Docker File Image
    *  Docker-Compose File
+* Create HTML Form Page
+* Connect Form to Database
 * Grafische Übersicht
 * Testing
   * PHP + Apache
@@ -162,6 +164,85 @@ echo 'successfully connected to Obi`s MYSQL';
 
 ?>
 ```
+
+### HTML Form für Datenbank erstellen
+Ich habe nun einen HTML Form erstellt, die Angaben zur eine Person abfragt.
+```Ruby
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Obi's Register Form</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body>
+<form>
+    <table>
+        <tr>
+            <td>
+                Name :
+            </td>
+            <td>
+                <input type="text" placeholder="Name" name="" >
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Password :
+            </td>
+            <td>
+                <input type="password" placeholder="Name" name="" >
+            </td> 
+        </tr>
+        <tr>
+            <td>
+                Gender :
+            </td>
+            <td>
+                <input type="radio" name="Gender" >Male
+                <input type="radio" name="Gender" >Female
+            </td> 
+        </tr>
+        <tr>
+            <td>
+                Email :
+            </td>
+            <td>
+                <input type="mail" placeholder="Email" name="" >
+            </td> 
+        </tr>   
+        <tr>
+            <td>
+                Phone No. :
+            </td>
+            <td>
+                <select>
+                    <option>076</option>
+                    <option>077</option>
+                    <option>078</option>
+                    <option>079</option>
+                    <option>044</option>
+                </select>
+                <input type="Phone" placeholder="079 123 ** **" name="">
+            </td> 
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="submit" name="" >
+            </td> 
+        </tr> 
+    </table>
+</form>    
+</body>
+</html>
+```
+Nun Sieht die Form so aus: <br>
+![HTML Form](images/HTML_Form.png)
+
+
 ## Grafische Übersicht 
 ___
 
