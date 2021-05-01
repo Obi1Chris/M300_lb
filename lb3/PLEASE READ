@@ -1,0 +1,4 @@
+Um meine Umgebung zu starten müssen Sie die den Docker VM von meinen Vagrantfile verwenden.
+In diese VM befinden sich dann alle benötigte Files und Ressourcen, damit die Container und Prozesse erfolgreich erstellt werden können.
+Die Vagrantfile befindet sich in Verzeichnis "DockerVM" also: https://github.com/Obi1Chris/M300_lb/new/main/lb3/DockerVM/
+Gruss Herr Maduabum
