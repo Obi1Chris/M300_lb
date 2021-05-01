@@ -13,7 +13,7 @@ if (isset($_POST['submit'])) {
 
         $host = "db";
         $dbUsername = "Obisql";
-        $dbPassword = "obipass123";
+        $dbPassword = "obipass123"; 
         $dbName = "Obi_test_db";
 
         $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
                 }
             }
             else {
-                echo "Someone already registers using this email.";
+                echo "Someone already registered using this email.";
             }
             $stmt->close();
             $conn->close();
