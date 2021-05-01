@@ -66,7 +66,11 @@ Damit die "Docker-Compose" Befehl angewendet kann, muss dies im Docker VM noch i
 Danach noch die Berechtigung anpassen (ausführbar machen):<br>
 >``sudo chmod +x /usr/local/bin/docker-compose``
 
+### **Docker VM für Test**
 
+Um meine Umgebung zu starten müssen Sie die den Docker VM von meinen Vagrantfile verwenden.
+In diese VM befinden sich dann alle benötigte Files und Ressourcen, damit die Container und Prozesse erfolgreich erstellt werden können.
+Die Vagrantfile befindet sich in Verzeichnis "DockerVM" also hier: https://github.com/Obi1Chris/M300_lb/tree/main/lb3/DockerVM
 
 ## PHP und Apache Dienst installieren
 ___
